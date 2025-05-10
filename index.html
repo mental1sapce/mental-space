@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentalSpace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+    body {
+      background: linear-gradient(120deg, #f8f9fa, #e0c3fc);
+      color: #333;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #6a11cb;
+    }
+    .form-container, .posts-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #6a11cb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+    .post:last-child {
+      border-bottom: none;
+    }
+    .tag {
+      font-size: 0.9rem;
+      color: #6a11cb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MentalSpace</h1>
+    <p>Share and explore real experiences. You're not alone.</p>
+  </header>
+
+  <div class="form-container">
+    <h2>Share Your Story</h2>
+    <input type="text" id="username" placeholder="Username (required)" required />
+    <input type="number" id="age" placeholder="Age (optional)" />
+    <select id="gender">
+      <option value="">Gender (optional)</option>
+      <option value="Female">Female</option>
+      <option value="Male">Male</option>
+      <option value="Other">Other</option>
+    </select>
+    <select id="topic">
+      <option value="">Select a topic</option>
+      <option value="Anxiety">Anxiety</option>
+      <option value="Depression">Depression</option>
+      <option value="Self-Doubt">Self-Doubt</option>
+      <option value="Loneliness">Loneliness</option>
+    </select>
+    <textarea id="story" rows="5" placeholder="Write your experience..."></textarea>
+    <button onclick="submitPost()">Submit</button>
+  </div>
+
+  <div class="posts-container">
+    <h2>Recent Stories</h2>
+    <div id="posts"></div>
+  </div>
+
+  <script>
+    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+
+    function submitPost() {
+      const username = document.getElementById('username').value.trim();
+      const age = document.getElementById('age').value;
+      const gender = document.getElementById('gender').value;
+      const topic = document.getElementById('topic').value;
+      const story = document.getElementById('story').value.trim();
+
+      if (!username || !topic || !story) {
+        alert('Please fill in username, topic, and story.');
+        return;
+      }
+
+      const post = {
+        username,
+        age,
+        gender,
+        topic,
+        story,
+        timestamp: new Date().toISOString()
+      };
+
+      posts.unshift(post);
+      localStorage.setItem('posts', JSON.stringify(posts));
+      displayPosts();
+
+      document.getElementById('story').value = '';
+    }
+
+    function displayPosts() {
+      const container = document.getElementById('posts');
+      container.innerHTML = posts.map(post => `
+        <div class="post">
+          <p class="tag">#${post.topic}</p>
+          <p>${post.story}</p>
+          <p><strong>- ${post.username}</strong> ${post.age ? `(${post.age})` : ''} ${post.gender ? `• ${post.gender}` : ''}</p>
+        </div>
+      `).join('');
+    }
+
+    displayPosts();
+  </script>
+</body>
+</html>
